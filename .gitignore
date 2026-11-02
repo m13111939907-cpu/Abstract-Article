@@ -1,4 +1,5 @@
 .env
+.env.prod
 __pycache__/
 *.pyc
 *.pyo
@@ -10,3 +11,9 @@ dist/
 *.log
 .pytest_cache/
 .mypy_cache/
+
+# 证书与 ACME 校验文件
+infra/certs/*
+!infra/certs/.gitkeep
+infra/certbot/www/*
+!infra/certbot/www/.gitkeep
