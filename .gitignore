@@ -17,3 +17,6 @@ infra/certs/*
 !infra/certs/.gitkeep
 infra/certbot/www/*
 !infra/certbot/www/.gitkeep
+
+# 本地 IDE 配置
+/.vscode/
