@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.controllers.graph import router as graph_router
 from app.controllers.health import router as health_router
 from app.controllers.papers import router as papers_router
 from app.controllers.projects import router as projects_router
@@ -34,6 +35,7 @@ app.include_router(health_router, prefix="/api")
 app.include_router(projects_router, prefix="/api")
 app.include_router(sources_router, prefix="/api")
 app.include_router(papers_router, prefix="/api")
+app.include_router(graph_router, prefix="/api")
 
 
 @app.get("/")

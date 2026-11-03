@@ -16,12 +16,26 @@ FEED_META_RE = re.compile(
 
 # 中英文停用词（精简版，够首轮筛选用）
 EN_STOPWORDS = {
-    "the", "and", "for", "with", "that", "this", "from", "are", "was", "were",
-    "have", "has", "had", "not", "but", "you", "your", "our", "their", "they",
-    "can", "will", "would", "could", "should", "may", "might", "than", "then",
-    "into", "over", "under", "about", "these", "those", "such", "which", "what",
-    "when", "where", "who", "how", "why", "its", "his", "her", "she", "him",
-    "been", "being", "more", "most", "some", "any", "all", "also", "only",
+    "a", "an", "the", "and", "or", "but", "nor", "so", "yet", "if", "as",
+    "at", "by", "in", "on", "of", "to", "from", "into", "over", "under",
+    "about", "with", "without", "for", "than", "then", "that", "this",
+    "these", "those", "there", "here", "it", "its", "is", "are", "be",
+    "been", "being", "was", "were", "am", "do", "does", "did", "doing",
+    "have", "has", "had", "having", "can", "could", "will", "would",
+    "shall", "should", "may", "might", "must", "not", "no", "yes",
+    "you", "your", "yours", "we", "our", "ours", "they", "their",
+    "them", "he", "him", "his", "she", "her", "hers", "i", "me", "my",
+    "who", "whom", "whose", "which", "what", "when", "where", "why",
+    "how", "all", "any", "both", "each", "few", "more", "most", "less",
+    "least", "other", "some", "such", "only", "own", "same", "too",
+    "very", "just", "even", "still", "back", "now", "out", "up", "down",
+    "off", "again", "one", "two", "first", "last", "many", "much",
+    "make", "makes", "made", "take", "takes", "took", "taken", "give",
+    "gives", "given", "find", "finds", "found", "show", "shows",
+    "showed", "shown", "use", "uses", "used", "using", "study",
+    "studies", "report", "reports", "reported", "new", "news", "year",
+    "years", "day", "days", "time", "times", "way", "ways", "part",
+    "parts", "like", "another", "people", "person", "researchers",
 }
 ZH_STOPWORDS = {
     "的", "了", "和", "是", "在", "我", "有", "就", "不", "人", "都", "一",
@@ -46,13 +60,13 @@ def strip_feed_metadata(text: str) -> str:
 
 
 # 英文分词并过滤停用词
-def _english_words(text: str) -> list[str]:
+def english_words(text: str) -> list[str]:
     words = [w.lower() for w in EN_WORD_RE.findall(text)]
     return [w for w in words if w not in EN_STOPWORDS and len(w) > 2]
 
 
 # 中文分词结果（只保留含中文的词，长度 > 1，过滤停用词）
-def _chinese_words(text: str) -> list[str]:
+def chinese_words(text: str) -> list[str]:
     return [
         w.strip()
         for w in jieba.cut(text)
@@ -69,7 +83,7 @@ def extract_keywords(text: str, top_k: int = 10) -> list[str]:
     result: list[str] = []
     if CJK_RE.search(text):
         result.extend(jieba.analyse.extract_tags(text, topK=top_k))
-    for word, _ in Counter(_english_words(text)).most_common(top_k):
+    for word, _ in Counter(english_words(text)).most_common(top_k):
         result.append(word)
 
     # 去重保序（英文忽略大小写），截断到 top_k
@@ -89,6 +103,6 @@ def top_words(text: str, top_k: int = 10) -> list[str]:
     if not text:
         return []
 
-    counter = Counter(_chinese_words(text))
-    counter.update(_english_words(text))
+    counter = Counter(chinese_words(text))
+    counter.update(english_words(text))
     return [word for word, _ in counter.most_common(top_k)]
