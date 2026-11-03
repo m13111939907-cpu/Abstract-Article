@@ -7,6 +7,7 @@ from app.controllers.graph import router as graph_router
 from app.controllers.health import router as health_router
 from app.controllers.papers import router as papers_router
 from app.controllers.projects import router as projects_router
+from app.controllers.screening import router as screening_router
 from app.controllers.sources import router as sources_router
 from app.core.config import settings
 from app.core.mysql import init_db
@@ -36,6 +37,7 @@ app.include_router(projects_router, prefix="/api")
 app.include_router(sources_router, prefix="/api")
 app.include_router(papers_router, prefix="/api")
 app.include_router(graph_router, prefix="/api")
+app.include_router(screening_router, prefix="/api")
 
 
 @app.get("/")
