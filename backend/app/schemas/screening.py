@@ -2,7 +2,26 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.graph import GraphOut
 from app.schemas.paper import PaperOut
+
+
+class ScreeningBrief(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    score: float
+    passed: bool
+    reason: str
+    model: str
+    created_at: datetime
+
+
+# 阅读页聚合：文献 + 图谱 + 二轮结论
+class ReadingOut(BaseModel):
+    paper: PaperOut
+    graph: GraphOut
+    screening: ScreeningBrief | None = None
 
 
 class ScreeningOut(BaseModel):

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.mysql import get_db
 from app.models.paper import Paper
 from app.models.source import Source
-from app.schemas.source import SourceCreate, SourceOut
+from app.schemas.source import SourceCreate, SourceOut, SourceUpdate
 
 router = APIRouter(prefix="/sources", tags=["sources"])
 
@@ -28,6 +28,21 @@ def create_source(payload: SourceCreate, db: Session = Depends(get_db)):
 @router.get("", response_model=list[SourceOut])
 def list_sources(db: Session = Depends(get_db)):
     return db.scalars(select(Source).order_by(Source.id)).all()
+
+
+# 启用/禁用订阅源
+@router.patch("/{source_id}", response_model=SourceOut)
+def update_source(
+    source_id: int, payload: SourceUpdate, db: Session = Depends(get_db)
+):
+    source = db.get(Source, source_id)
+    if not source:
+        raise HTTPException(status_code=404, detail="订阅源不存在")
+
+    source.enabled = payload.enabled
+    db.commit()
+    db.refresh(source)
+    return source
 
 
 # 删除订阅源

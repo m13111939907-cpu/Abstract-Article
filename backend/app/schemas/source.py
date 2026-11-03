@@ -24,6 +24,11 @@ class SourceCreate(BaseModel):
         return value
 
 
+# 启用/禁用订阅源
+class SourceUpdate(BaseModel):
+    enabled: bool
+
+
 class SourceOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

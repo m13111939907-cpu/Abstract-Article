@@ -1,5 +1,18 @@
 from app.core.neo4j import get_driver
 
+
+# 启动时创建 paper_id 索引，加速按文献取图
+def ensure_indexes() -> None:
+    with get_driver().session() as session:
+        session.run(
+            "CREATE INDEX entity_paper_idx IF NOT EXISTS "
+            "FOR (e:Entity) ON (e.paper_id)"
+        ).consume()
+        session.run(
+            "CREATE INDEX paper_paper_idx IF NOT EXISTS "
+            "FOR (p:Paper) ON (p.paper_id)"
+        ).consume()
+
 # 覆盖写入单篇文献的图：先删除旧图，再写 Paper 与实体
 _ENTITY_QUERY = """
 MATCH (p:Paper {paper_id: $pid})

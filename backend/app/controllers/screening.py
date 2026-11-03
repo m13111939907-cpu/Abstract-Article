@@ -29,17 +29,21 @@ def screen2(
 def list_screen2(
     project_id: int,
     passed: bool | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
 ):
     if not db.get(Project, project_id):
         raise HTTPException(status_code=404, detail="项目不存在")
 
-    stmt = (
-        select(LLMScreening)
-        .options(selectinload(LLMScreening.paper))
-        .where(LLMScreening.project_id == project_id)
-        .order_by(LLMScreening.score.desc(), LLMScreening.id)
-    )
+    stmt = select(LLMScreening).options(
+        selectinload(LLMScreening.paper)
+    ).where(LLMScreening.project_id == project_id)
     if passed is not None:
         stmt = stmt.where(LLMScreening.passed.is_(passed))
+    stmt = (
+        stmt.order_by(LLMScreening.score.desc(), LLMScreening.id)
+        .limit(limit)
+        .offset(offset)
+    )
     return db.scalars(stmt).all()
