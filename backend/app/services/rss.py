@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.paper import Paper
+from app.models.source import Source
 from app.services.text import (
     clean_text,
     extract_keywords,
@@ -21,7 +22,7 @@ MAX_ABSTRACT_LEN = 5000
 
 
 # 下载 RSS 内容并解析
-def fetch_feed(url: str, timeout: int = 20):
+def fetch_feed(url: str, timeout: int = 20) -> "feedparser.FeedParserDict":
     resp = httpx.get(
         url,
         timeout=timeout,
@@ -63,7 +64,7 @@ def content_hash(title: str, url: str, doi: str) -> str:
 
 
 # 把 feed 条目转换成待入库的文献数据
-def parse_entries(feed) -> list[dict]:
+def parse_entries(feed: "feedparser.FeedParserDict") -> list[dict]:
     items: list[dict] = []
     for entry in feed.entries:
         title = clean_text(entry.get("title", ""))[:512]
@@ -95,7 +96,7 @@ def parse_entries(feed) -> list[dict]:
 
 
 # 抓取单个订阅源并入库，返回统计
-def fetch_source(db: Session, source) -> dict:
+def fetch_source(db: Session, source: Source) -> dict:
     result = {"fetched": 0, "inserted": 0, "duplicated": 0, "errors": []}
 
     try:
