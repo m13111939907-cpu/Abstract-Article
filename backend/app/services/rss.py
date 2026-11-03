@@ -1,9 +1,6 @@
 import hashlib
-import ipaddress
-import socket
 import time
 from datetime import datetime
-from urllib.parse import urlparse
 
 import feedparser
 import httpx
@@ -24,26 +21,8 @@ USER_AGENT = "Mozilla/5.0 (compatible; ArticleAbstract/1.0)"
 MAX_ABSTRACT_LEN = 5000
 
 
-# 防止 RSS 地址指向内网（SSRF）
-def _ensure_public_url(url: str) -> None:
-    host = urlparse(url).hostname
-    if not host:
-        raise ValueError("无效的 RSS 地址")
-
-    try:
-        infos = socket.getaddrinfo(host, None)
-    except socket.gaierror as exc:
-        raise ValueError(f"域名无法解析: {host}") from exc
-
-    for info in infos:
-        ip = ipaddress.ip_address(info[4][0].split("%")[0])
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
-            raise ValueError("禁止访问内网地址")
-
-
 # 下载 RSS 内容并解析
 def fetch_feed(url: str, timeout: int = 20) -> "feedparser.FeedParserDict":
-    _ensure_public_url(url)
     resp = httpx.get(
         url,
         timeout=timeout,
