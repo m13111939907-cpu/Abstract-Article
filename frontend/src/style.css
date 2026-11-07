@@ -127,9 +127,17 @@ body {
     radial-gradient(1.3px 1.3px at 300px 128px, var(--star) 50%, transparent 52%),
     radial-gradient(1.1px 1.1px at 342px 286px, var(--star) 50%, transparent 52%),
     radial-gradient(1.5px 1.5px at 382px 40px, var(--star-strong) 50%, transparent 52%),
-    radial-gradient(1px 1px at 330px 400px, var(--star) 50%, transparent 52%);
-  background-size: 420px 420px;
-  opacity: 0.75;
+    radial-gradient(1px 1px at 330px 400px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 46px 136px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 108px 20px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 176px 258px, var(--star-strong) 50%, transparent 52%),
+    radial-gradient(1px 1px at 236px 128px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 292px 338px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 360px 196px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 396px 360px, var(--star-strong) 50%, transparent 52%),
+    radial-gradient(1px 1px at 20px 320px, var(--star) 50%, transparent 52%);
+  background-size: 360px 360px;
+  opacity: 0.85;
   animation: stars-twinkle 7s ease-in-out infinite alternate;
 }
 
@@ -141,11 +149,66 @@ body {
     radial-gradient(1px 1px at 140px 300px, var(--star) 50%, transparent 52%),
     radial-gradient(1.3px 1.3px at 380px 340px, var(--star) 50%, transparent 52%),
     radial-gradient(1px 1px at 40px 430px, var(--star) 50%, transparent 52%),
-    radial-gradient(1.4px 1.4px at 260px 470px, var(--star) 50%, transparent 52%);
-  background-size: 520px 520px;
-  opacity: 0.5;
+    radial-gradient(1.4px 1.4px at 260px 470px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 30px 180px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 120px 400px, var(--star-strong) 50%, transparent 52%),
+    radial-gradient(1px 1px at 200px 40px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 330px 80px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 430px 210px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 470px 420px, var(--star-strong) 50%, transparent 52%),
+    radial-gradient(1px 1px at 360px 500px, var(--star) 50%, transparent 52%);
+  background-size: 440px 440px;
+  opacity: 0.65;
   animation: stars-twinkle 9s ease-in-out infinite alternate;
   animation-delay: 2s;
+}
+
+.stars-c {
+  background-image:
+    radial-gradient(0.9px 0.9px at 18px 26px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 62px 88px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 110px 34px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 146px 142px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.1px 1.1px at 196px 72px, var(--star-strong) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 224px 190px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.9px 0.9px at 44px 214px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 88px 170px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 170px 244px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.9px 0.9px at 270px 128px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 292px 254px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 250px 20px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 132px 276px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.9px 0.9px at 14px 130px, var(--star) 50%, transparent 52%),
+    radial-gradient(0.8px 0.8px at 210px 286px, var(--star) 50%, transparent 52%),
+    radial-gradient(1px 1px at 288px 178px, var(--star-strong) 50%, transparent 52%);
+  background-size: 240px 240px;
+  opacity: 0.62;
+  animation: stars-twinkle 11s ease-in-out infinite alternate;
+  animation-delay: 4s;
+}
+
+.stars-d {
+  background-image:
+    radial-gradient(1.3px 1.3px at 12px 18px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 48px 64px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 96px 22px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 132px 98px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 176px 48px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 24px 128px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 72px 168px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 118px 146px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 158px 184px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 188px 122px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 42px 196px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 104px 208px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 164px 86px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 190px 210px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 6px 88px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 82px 108px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 142px 14px, var(--star) 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 200px 168px, var(--star) 50%, transparent 52%);
+  background-size: 200px 200px;
+  opacity: 0.72;
 }
 
 @keyframes stars-twinkle {
@@ -1101,7 +1164,7 @@ ol {
    固定月亮星空背景
    ============================================================ */
 
-html {
+html[data-theme='dark'] {
   --bg: #070d18;
   --bg-deep: #0a1322;
   --surface: #0f1929;
@@ -1146,7 +1209,7 @@ html {
   --star-strong: #ffffff;
 }
 
-html body {
+html[data-theme='dark'] body {
   background:
     radial-gradient(1100px 720px at 76% -12%, #17295a 0%, rgba(23, 41, 90, 0) 62%),
     radial-gradient(900px 520px at 100% 0%, #241a4a 0%, rgba(36, 26, 74, 0) 55%),
@@ -1154,22 +1217,30 @@ html body {
   background-attachment: fixed;
 }
 
-html .stars-a {
-  opacity: 0.92;
+html[data-theme='dark'] .stars-a {
+  opacity: 0.98;
 }
 
-html .stars-b {
-  opacity: 0.7;
+html[data-theme='dark'] .stars-b {
+  opacity: 0.8;
 }
 
-html .sky-moon {
+html[data-theme='dark'] .stars-c {
+  opacity: 0.72;
+}
+
+html[data-theme='dark'] .stars-d {
+  opacity: 0.78;
+}
+
+html[data-theme='dark'] .sky-moon {
   opacity: 1;
   box-shadow:
     0 0 30px 10px rgba(214, 228, 255, 0.6),
     0 0 110px 44px rgba(110, 150, 255, 0.3);
 }
 
-html .app-shell::before {
+html[data-theme='dark'] .app-shell::before {
   background:
     radial-gradient(380px 380px at 22% 18%, rgba(91, 140, 255, 0.14), transparent 70%),
     radial-gradient(440px 440px at 82% 8%, rgba(154, 139, 255, 0.12), transparent 70%),
@@ -1177,72 +1248,72 @@ html .app-shell::before {
 }
 
 /* 个别组件早期写死了浅色，这里统一压到深色表面 */
-html .topbar {
+html[data-theme='dark'] .topbar {
   background: rgba(9, 16, 30, 0.82);
   border-bottom-color: rgba(28, 43, 69, 0.9);
 }
 
-html .sidebar {
+html[data-theme='dark'] .sidebar {
   background: linear-gradient(180deg, #0b1526 0%, #091120 100%);
 }
 
-html .global-search,
-html .conn-pill {
+html[data-theme='dark'] .global-search,
+html[data-theme='dark'] .conn-pill {
   background: rgba(19, 31, 51, 0.9);
 }
 
-html .global-search:focus-within,
-html .conn-pill:hover,
-html .conn-card:hover {
+html[data-theme='dark'] .global-search:focus-within,
+html[data-theme='dark'] .conn-pill:hover,
+html[data-theme='dark'] .conn-card:hover {
   background: #18263d;
 }
 
-html .global-search input::placeholder,
-html .input::placeholder,
-html .textarea::placeholder {
+html[data-theme='dark'] .global-search input::placeholder,
+html[data-theme='dark'] .input::placeholder,
+html[data-theme='dark'] .textarea::placeholder {
   color: #6b80a1;
 }
 
-html .hero {
+html[data-theme='dark'] .hero {
   background:
     radial-gradient(120% 160% at 100% 0%, rgba(70, 110, 200, 0.22) 0%, rgba(70, 110, 200, 0) 58%),
     linear-gradient(180deg, #101c30 0%, #0c1728 100%);
   border-color: #1e3050;
 }
 
-html .hero-visual::after {
+html[data-theme='dark'] .hero-visual::after {
   background: linear-gradient(90deg, #0f1a2c 0%, transparent 16%);
 }
 
-html .sun {
+html[data-theme='dark'] .sun {
   opacity: 0.35;
 }
 
-html .hero-badge {
+html[data-theme='dark'] .hero-badge {
   background: rgba(18, 30, 50, 0.75);
   border-color: rgba(70, 100, 150, 0.5);
 }
 
-html .note-card,
-html .about-card {
+html[data-theme='dark'] .note-card,
+html[data-theme='dark'] .about-card {
   background: linear-gradient(180deg, #101c30 0%, #0d1728 100%);
 }
 
-html .arch-node,
-html .health-icon {
+html[data-theme='dark'] .arch-node,
+html[data-theme='dark'] .health-icon {
   background: #152339;
 }
 
-html .table tbody tr:hover,
-html .paper-row:hover {
+html[data-theme='dark'] .table tbody tr:hover,
+html[data-theme='dark'] .paper-row:hover {
   background: #142238;
 }
 
-html .skeleton {
+html[data-theme='dark'] .skeleton {
   background: #16243a;
 }
 
-html .skeleton::after {
+html[data-theme='dark'] .skeleton::after {
   background: linear-gradient(
     90deg,
     transparent,
@@ -1251,121 +1322,121 @@ html .skeleton::after {
   );
 }
 
-html .status.is-gray {
+html[data-theme='dark'] .status.is-gray {
   background: #17253a;
 }
 
-html .new-card {
+html[data-theme='dark'] .new-card {
   background: rgba(21, 36, 60, 0.5);
   border-color: #2b4064;
 }
 
-html .new-icon {
+html[data-theme='dark'] .new-icon {
   background: var(--surface);
 }
 
-html .paper-rail {
+html[data-theme='dark'] .paper-rail {
   background: #0c1728;
 }
 
-html .rail-search .input {
+html[data-theme='dark'] .rail-search .input {
   background: var(--surface);
 }
 
-html .rail-item.is-active {
+html[data-theme='dark'] .rail-item.is-active {
   background: var(--surface-soft);
   border-color: var(--line-2);
 }
 
-html .legend,
-html .inspector {
+html[data-theme='dark'] .legend,
+html[data-theme='dark'] .inspector {
   background: rgba(15, 25, 41, 0.94);
 }
 
-html .abstract-text {
+html[data-theme='dark'] .abstract-text {
   color: var(--ink-soft);
 }
 
 /* 项目详情：筛选流水线与结果区 */
-html .pipeline {
+html[data-theme='dark'] .pipeline {
   background: linear-gradient(180deg, #101c30 0%, #0c1728 100%);
 }
 
-html .pipe-step {
+html[data-theme='dark'] .pipe-step {
   background: var(--surface);
 }
 
-html .pipe-step.is-final {
+html[data-theme='dark'] .pipe-step.is-final {
   background: linear-gradient(180deg, #12233c, #0f1b2f);
   border-color: var(--line-2);
 }
 
-html .pipe-step:hover {
+html[data-theme='dark'] .pipe-step:hover {
   border-color: var(--line-3);
 }
 
-html .pipe-arrow {
+html[data-theme='dark'] .pipe-arrow {
   color: #3b587f;
 }
 
-html .tabs {
+html[data-theme='dark'] .tabs {
   background: rgba(19, 31, 51, 0.75);
 }
 
-html .tab.is-active,
-html .filter-tab.is-active {
+html[data-theme='dark'] .tab.is-active,
+html[data-theme='dark'] .filter-tab.is-active {
   background: var(--surface-soft);
 }
 
-html .export-menu {
+html[data-theme='dark'] .export-menu {
   background: var(--surface);
 }
 
-html .danger-zone {
+html[data-theme='dark'] .danger-zone {
   background: rgba(42, 22, 24, 0.6);
   border-color: #4a2626;
 }
 
-html .info-list > div {
+html[data-theme='dark'] .info-list > div {
   border-bottom-color: var(--line);
 }
 
-html .review-row {
+html[data-theme='dark'] .review-row {
   border-top-color: var(--line);
 }
 
-html .match-score.is-high {
+html[data-theme='dark'] .match-score.is-high {
   border-color: var(--line-2);
 }
 
-html .article-label span {
+html[data-theme='dark'] .article-label span {
   color: var(--faint);
 }
 
-html .modal-card {
+html[data-theme='dark'] .modal-card {
   background: var(--surface);
   border-color: var(--line-2);
 }
 
-html .modal-close {
+html[data-theme='dark'] .modal-close {
   background: var(--surface-soft);
 }
 
-html .toast {
+html[data-theme='dark'] .toast {
   background: rgba(18, 30, 50, 0.97);
 }
 
 
-html .btn-secondary {
+html[data-theme='dark'] .btn-secondary {
   background: var(--surface);
 }
 
-html ::-webkit-scrollbar-thumb {
+html[data-theme='dark'] ::-webkit-scrollbar-thumb {
   background: #2c4466;
   background-clip: content-box;
 }
 
-html ::-webkit-scrollbar-thumb:hover {
+html[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
   background: #3b587f;
   background-clip: content-box;
 }

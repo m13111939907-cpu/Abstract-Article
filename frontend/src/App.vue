@@ -36,6 +36,8 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus))
   <div class="sky" aria-hidden="true">
     <div class="stars stars-a" />
     <div class="stars stars-b" />
+    <div class="stars stars-c" />
+    <div class="stars stars-d" />
     <div class="sky-moon" />
     <div class="sky-shoot" />
   </div>
