@@ -11,7 +11,6 @@ MAILTO = "article-abstract-demo@example.com"
 CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 
 
-# 把 OpenAlex 的倒排索引还原成摘要
 def _abstract(inverted: dict | None) -> str:
     if not inverted:
         return ""
@@ -22,7 +21,6 @@ def _abstract(inverted: dict | None) -> str:
     return " ".join(position[i] for i in sorted(position))
 
 
-# 作者名拼接
 def _authors(work: dict) -> str:
     names = [
         item.get("author", {}).get("display_name", "")
@@ -41,21 +39,15 @@ def _published(work: dict) -> datetime | None:
         return None
 
 
-# 按项目关键词在 OpenAlex 检索论文
-def search_openalex(keywords: list[str], limit: int = 50) -> list[dict]:
-    query = " ".join(keywords).strip()
-    if not query:
-        return []
-
+def _query(query: str, limit: int, language: str | None = None) -> list[dict]:
     params = {
         "search": query,
         "per-page": min(limit, 200),
         "sort": "relevance_score:desc",
         "mailto": MAILTO,
     }
-    # 中文关键词时只返回中文文献
-    if CJK_RE.search(query):
-        params["filter"] = "language:zh"
+    if language:
+        params["filter"] = f"language:{language}"
 
     response = httpx.get(
         OPENALEX_URL,
@@ -93,5 +85,24 @@ def search_openalex(keywords: list[str], limit: int = 50) -> list[dict]:
                 "published_at": _published(work),
             }
         )
-
     return items
+
+
+# 按关键词检索：中文词查中文库，英文词查英文库，最后合并去重
+def search_openalex(keywords: list[str], limit: int = 100) -> list[dict]:
+    zh_terms = [item for item in keywords if CJK_RE.search(item)]
+    en_terms = [item for item in keywords if not CJK_RE.search(item)]
+
+    items: list[dict] = []
+    if zh_terms:
+        items.extend(_query(" ".join(zh_terms), limit, "zh"))
+    if en_terms:
+        items.extend(_query(" ".join(en_terms), limit, "en"))
+    if not zh_terms and not en_terms:
+        items = _query(" ".join(keywords), limit)
+
+    unique: dict[str, dict] = {}
+    for item in items:
+        unique.setdefault(item["content_hash"], item)
+
+    return list(unique.values())[: limit * 2]

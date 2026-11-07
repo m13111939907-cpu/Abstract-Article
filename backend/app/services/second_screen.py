@@ -8,12 +8,12 @@ from app.models.screening import LLMScreening
 from app.services.annotation import annotate_paper
 from app.services.graph import get_paper_graph
 from app.services.llm import get_provider
-from app.services.matching import parse_keywords
+from app.services.matching import project_keywords
 
 
 # 第二轮筛选：图谱 + 摘要 交给 LLM 判断，结果写入 MySQL
 def screen_project_round2(db: Session, project: Project, limit: int = 20) -> dict:
-    keywords = parse_keywords(project.keywords)
+    keywords = project_keywords(project.keywords)
     provider = get_provider()
 
     # 只取「已通过首轮、且还没二轮审阅」的文献

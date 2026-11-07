@@ -99,30 +99,53 @@ def parse_entries(feed: "feedparser.FeedParserDict") -> list[dict]:
     return items
 
 
-# 写入文献并按 content_hash 去重
+# 批量写入文献并按 content_hash 去重（一次查询 + 一次提交）
 def store_items(db: Session, items: list[dict], source_id: int | None = None) -> dict:
-    result = {"fetched": len(items), "inserted": 0, "duplicated": 0, "errors": []}
+    result = {
+        "fetched": len(items),
+        "inserted": 0,
+        "duplicated": 0,
+        "errors": [],
+        "hashes": [],
+    }
 
-    seen: set[str] = set()
+    unique: dict[str, dict] = {}
     for item in items:
         key = item["content_hash"]
-        if key in seen:
+        if key in unique:
             result["duplicated"] += 1
             continue
-        seen.add(key)
+        unique[key] = item
 
-        exists = db.scalar(select(Paper.id).where(Paper.content_hash == key))
-        if exists:
-            result["duplicated"] += 1
-            continue
+    hashes = list(unique.keys())
+    result["hashes"] = hashes
+    if not hashes:
+        return result
 
-        db.add(Paper(source_id=source_id, **item))
-        try:
-            db.commit()
-            result["inserted"] += 1
-        except IntegrityError:
-            db.rollback()
-            result["duplicated"] += 1
+    existing = set(
+        db.scalars(select(Paper.content_hash).where(Paper.content_hash.in_(hashes)))
+    )
+    result["duplicated"] += len(existing)
+
+    new_items = [item for key, item in unique.items() if key not in existing]
+    if not new_items:
+        return result
+
+    db.add_all([Paper(source_id=source_id, **item) for item in new_items])
+    try:
+        db.commit()
+        result["inserted"] = len(new_items)
+    except IntegrityError:
+        # 并发冲突时回退到逐条写入
+        db.rollback()
+        for item in new_items:
+            try:
+                db.add(Paper(source_id=source_id, **item))
+                db.commit()
+                result["inserted"] += 1
+            except IntegrityError:
+                db.rollback()
+                result["duplicated"] += 1
 
     return result
 
@@ -137,6 +160,7 @@ def fetch_source(db: Session, source: Source) -> dict:
             "inserted": 0,
             "duplicated": 0,
             "errors": [f"{source.name}: {exc}"],
+            "hashes": [],
         }
 
     return store_items(db, parse_entries(feed), source.id)

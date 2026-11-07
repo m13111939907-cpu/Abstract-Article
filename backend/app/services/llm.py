@@ -66,6 +66,9 @@ class MockProvider:
 
         return {"entities": entity_list, "relations": relations}
 
+    def translate(self, text: str) -> str:
+        return ""
+
     def judge(self, keywords: list[str], abstract: str, entities: list[str]) -> dict:
         text = f"{abstract} {' '.join(entities)}".lower()
         hits = [keyword for keyword in keywords if keyword in text]
@@ -84,6 +87,11 @@ ANNOTATE_PROMPT = (
     '{"entities":[{"name":"","type":""}],'
     '"relations":[{"source":"","target":"","type":"","confidence":0.0}]}。'
     "实体类型限定 CONCEPT/ACRONYM/METHOD/DATASET/PERSON/ORG。"
+)
+
+TRANSLATE_PROMPT = (
+    "把输入的中文研究关键词翻译成英文。只输出 JSON："
+    '{"translation":"english keywords"}。'
 )
 
 JUDGE_PROMPT = (
@@ -122,6 +130,12 @@ class OpenAICompatProvider:
 
     def annotate(self, text: str) -> dict:
         return self._request(ANNOTATE_PROMPT, text[:6000])
+
+    def translate(self, text: str) -> str:
+        result = self._request(TRANSLATE_PROMPT, text[:500])
+        if isinstance(result, dict):
+            return str(result.get("translation") or "")
+        return ""
 
     def judge(self, keywords: list[str], abstract: str, entities: list[str]) -> dict:
         context = (

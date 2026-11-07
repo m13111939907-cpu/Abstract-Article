@@ -18,6 +18,7 @@ from app.schemas.project import (
 )
 from app.services.export import export_bibtex, export_csv
 from app.services.matching import link_candidates, parse_keywords, screen_project
+from app.services.translate import expand_keywords
 from app.services.rss import fetch_source, store_items
 from app.services.search import search_openalex
 
@@ -176,19 +177,22 @@ def fetch_project_sources(
         sources = db.scalars(select(Source).where(Source.enabled.is_(True))).all()
 
     result = FetchResult()
+    fetched_hashes: list[str] = []
     for source in sources:
         stats = fetch_source(db, source)
         result.fetched += stats["fetched"]
         result.inserted += stats["inserted"]
         result.duplicated += stats["duplicated"]
         result.errors.extend(stats["errors"])
+        fetched_hashes.extend(stats.get("hashes", []))
 
-    # 按项目关键词做一次 OpenAlex 学术检索
+    # 按项目关键词做 OpenAlex 学术检索（中文自动翻译成英文一起查）
     keywords = parse_keywords(project.keywords)
     if keywords:
         try:
-            items = search_openalex(keywords, limit=100)
+            items = search_openalex(expand_keywords(keywords), limit=100)
             topic = store_items(db, items)
+            fetched_hashes.extend(topic.get("hashes", []))
             result.topic_fetched = topic["fetched"]
             result.topic_inserted = topic["inserted"]
             result.fetched += topic["fetched"]
@@ -198,8 +202,8 @@ def fetch_project_sources(
         except Exception as exc:  # noqa: BLE001
             result.errors.append(f"OpenAlex: {exc}")
 
-    # 把命中关键词的文献关联到当前项目
-    result.candidates = link_candidates(db, project)
+    # 只检查本次抓取到的文献，避免全表扫描
+    result.candidates = link_candidates(db, project, hashes=fetched_hashes)
     result.project_candidates = (
         db.scalar(
             select(func.count(ProjectPaper.id)).where(

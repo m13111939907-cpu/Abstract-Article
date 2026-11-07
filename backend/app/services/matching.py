@@ -1,11 +1,11 @@
 import re
 
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.paper import Paper, ProjectPaper
 from app.models.project import Project
+from app.services.translate import expand_keywords
 
 
 # 拆分用户输入的关键词（中英文逗号、分号、空白都支持）
@@ -37,11 +37,25 @@ def match_paper(paper: Paper, keywords: list[str]) -> tuple[int, list[str]]:
     return score, matched
 
 
-# 把库中命中关键词的文献关联为项目候选
-def link_candidates(db: Session, project: Project) -> int:
-    keywords = parse_keywords(project.keywords)
+# 项目关键词统一做中英文扩展
+def project_keywords(raw: str) -> list[str]:
+    return expand_keywords(parse_keywords(raw))
+
+
+# 把命中关键词的文献关联为项目候选
+# hashes 不为 None 时只检查本次抓取到的文献，避免全表扫描
+def link_candidates(
+    db: Session, project: Project, hashes: list[str] | None = None
+) -> int:
+    keywords = project_keywords(project.keywords)
     if not keywords:
         return 0
+
+    stmt = select(Paper)
+    if hashes is not None:
+        if not hashes:
+            return 0
+        stmt = stmt.where(Paper.content_hash.in_(hashes))
 
     linked = set(
         db.scalars(
@@ -49,35 +63,32 @@ def link_candidates(db: Session, project: Project) -> int:
         )
     )
 
-    added = 0
-    for paper in db.scalars(select(Paper)).all():
+    new_links = []
+    for paper in db.scalars(stmt).all():
         if paper.id in linked:
             continue
         score, matched = match_paper(paper, keywords)
         if score <= 0:
             continue
-        try:
-            with db.begin_nested():
-                db.add(
-                    ProjectPaper(
-                        project_id=project.id,
-                        paper_id=paper.id,
-                        match_score=score,
-                        matched_keywords=matched,
-                        status="candidate",
-                    )
-                )
-        except IntegrityError:
-            continue
-        added += 1
+        new_links.append(
+            ProjectPaper(
+                project_id=project.id,
+                paper_id=paper.id,
+                match_score=score,
+                matched_keywords=matched,
+                status="candidate",
+            )
+        )
 
-    db.commit()
-    return added
+    if new_links:
+        db.add_all(new_links)
+        db.commit()
+    return len(new_links)
 
 
 # 首轮筛选：优先处理候选，兼容旧项目则扫描全部未关联文献
 def screen_project(db: Session, project: Project) -> dict:
-    keywords = parse_keywords(project.keywords)
+    keywords = project_keywords(project.keywords)
 
     candidates = db.scalars(
         select(ProjectPaper).where(
