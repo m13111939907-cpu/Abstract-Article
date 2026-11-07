@@ -16,12 +16,18 @@ router = APIRouter(prefix="/papers", tags=["papers"])
 # 全部已抓取文献（分页）
 @router.get("", response_model=list[PaperOut])
 def list_papers(
+    project_id: int | None = Query(default=None),
     limit: int = Query(default=20, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
 ):
+    stmt = select(Paper)
+    if project_id is not None:
+        stmt = stmt.join(
+            ProjectPaper, ProjectPaper.paper_id == Paper.id
+        ).where(ProjectPaper.project_id == project_id)
     return db.scalars(
-        select(Paper).order_by(Paper.id.desc()).limit(limit).offset(offset)
+        stmt.order_by(Paper.id.desc()).limit(limit).offset(offset)
     ).all()
 
 

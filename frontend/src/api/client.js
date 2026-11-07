@@ -175,8 +175,14 @@ export async function batchAnnotate(id, limit = 50) {
 
 /* ----------------------------- 文献 ----------------------------- */
 
-export async function listPapers({ limit = 500, offset = 0 } = {}) {
-  return request('/papers', { params: { limit, offset } })
+export async function listPapers({ projectId = null, limit = 500, offset = 0 } = {}) {
+  return request('/papers', {
+    params: {
+      ...(projectId === null || projectId === undefined ? {} : { project_id: projectId }),
+      limit,
+      offset,
+    },
+  })
 }
 
 export async function getPaper(id) {

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
-import { ensureReady, listPapers } from '../api/client'
+import { ensureReady, listPapers, listProjects } from '../api/client'
 import EmptyState from '../components/EmptyState.vue'
 import Icon from '../components/Icon.vue'
 import { toast } from '../store'
@@ -11,6 +11,8 @@ import { domainOf, formatDate } from '../utils/format'
 const route = useRoute()
 
 const papers = ref([])
+const projects = ref([])
+const projectId = ref(null)
 const loading = ref(true)
 const query = ref(String(route.query.q || ''))
 const sourceFilter = ref('all')
@@ -77,17 +79,34 @@ watch(
   },
 )
 
+async function loadPapers() {
+  if (!projectId.value) {
+    papers.value = []
+    return
+  }
+  papers.value = await listPapers({ projectId: projectId.value, limit: 500 })
+}
+
 async function load() {
   loading.value = true
   try {
     await ensureReady()
-    papers.value = await listPapers({ limit: 500 })
+    projects.value = await listProjects()
+    const requested = Number(route.query.project)
+    const matched = projects.value.find((item) => item.id === requested)
+    projectId.value = matched ? matched.id : projects.value[0]?.id ?? null
+    await loadPapers()
   } catch (error) {
     toast('文献库加载失败', error.message, 'error')
   } finally {
     loading.value = false
   }
 }
+
+watch(projectId, () => {
+  visibleCount.value = 10
+  loadPapers().catch((error) => toast('文献库加载失败', error.message, 'error'))
+})
 
 onMounted(load)
 </script>
@@ -99,7 +118,7 @@ onMounted(load)
         <p class="eyebrow">LITERATURE LIBRARY</p>
         <h1 class="page-title">文献库</h1>
         <p class="page-sub">
-          所有抓取到的论文，按 DOI / 链接去重后共享。关键词、摘要与高频词都已完成清洗。
+          当前项目下的文献。切换项目只会显示属于该项目的论文。
         </p>
       </div>
       <div class="page-actions">
@@ -127,6 +146,15 @@ onMounted(load)
       </div>
 
       <div class="toolbar-right">
+        <label class="select-wrap">
+          <Icon name="folder" :size="14" />
+          <select v-model="projectId" class="select" aria-label="选择项目">
+            <option v-for="project in projects" :key="project.id" :value="project.id">
+              {{ project.name }}
+            </option>
+          </select>
+        </label>
+
         <label class="select-wrap">
           <Icon name="globe" :size="14" />
           <select v-model="sourceFilter" class="select" aria-label="按来源筛选">
