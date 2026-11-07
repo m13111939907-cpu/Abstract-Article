@@ -1098,10 +1098,10 @@ ol {
 }
 
 /* ============================================================
-   深色主题
+   固定月亮星空背景
    ============================================================ */
 
-html[data-theme='dark'] {
+html {
   --bg: #070d18;
   --bg-deep: #0a1322;
   --surface: #0f1929;
@@ -1146,7 +1146,7 @@ html[data-theme='dark'] {
   --star-strong: #ffffff;
 }
 
-html[data-theme='dark'] body {
+html body {
   background:
     radial-gradient(1100px 720px at 76% -12%, #17295a 0%, rgba(23, 41, 90, 0) 62%),
     radial-gradient(900px 520px at 100% 0%, #241a4a 0%, rgba(36, 26, 74, 0) 55%),
@@ -1154,22 +1154,22 @@ html[data-theme='dark'] body {
   background-attachment: fixed;
 }
 
-html[data-theme='dark'] .stars-a {
+html .stars-a {
   opacity: 0.92;
 }
 
-html[data-theme='dark'] .stars-b {
+html .stars-b {
   opacity: 0.7;
 }
 
-html[data-theme='dark'] .sky-moon {
+html .sky-moon {
   opacity: 1;
   box-shadow:
     0 0 30px 10px rgba(214, 228, 255, 0.6),
     0 0 110px 44px rgba(110, 150, 255, 0.3);
 }
 
-html[data-theme='dark'] .app-shell::before {
+html .app-shell::before {
   background:
     radial-gradient(380px 380px at 22% 18%, rgba(91, 140, 255, 0.14), transparent 70%),
     radial-gradient(440px 440px at 82% 8%, rgba(154, 139, 255, 0.12), transparent 70%),
@@ -1177,72 +1177,72 @@ html[data-theme='dark'] .app-shell::before {
 }
 
 /* 个别组件早期写死了浅色，这里统一压到深色表面 */
-html[data-theme='dark'] .topbar {
+html .topbar {
   background: rgba(9, 16, 30, 0.82);
   border-bottom-color: rgba(28, 43, 69, 0.9);
 }
 
-html[data-theme='dark'] .sidebar {
+html .sidebar {
   background: linear-gradient(180deg, #0b1526 0%, #091120 100%);
 }
 
-html[data-theme='dark'] .global-search,
-html[data-theme='dark'] .conn-pill {
+html .global-search,
+html .conn-pill {
   background: rgba(19, 31, 51, 0.9);
 }
 
-html[data-theme='dark'] .global-search:focus-within,
-html[data-theme='dark'] .conn-pill:hover,
-html[data-theme='dark'] .conn-card:hover {
+html .global-search:focus-within,
+html .conn-pill:hover,
+html .conn-card:hover {
   background: #18263d;
 }
 
-html[data-theme='dark'] .global-search input::placeholder,
-html[data-theme='dark'] .input::placeholder,
-html[data-theme='dark'] .textarea::placeholder {
+html .global-search input::placeholder,
+html .input::placeholder,
+html .textarea::placeholder {
   color: #6b80a1;
 }
 
-html[data-theme='dark'] .hero {
+html .hero {
   background:
     radial-gradient(120% 160% at 100% 0%, rgba(70, 110, 200, 0.22) 0%, rgba(70, 110, 200, 0) 58%),
     linear-gradient(180deg, #101c30 0%, #0c1728 100%);
   border-color: #1e3050;
 }
 
-html[data-theme='dark'] .hero-visual::after {
+html .hero-visual::after {
   background: linear-gradient(90deg, #0f1a2c 0%, transparent 16%);
 }
 
-html[data-theme='dark'] .sun {
+html .sun {
   opacity: 0.35;
 }
 
-html[data-theme='dark'] .hero-badge {
+html .hero-badge {
   background: rgba(18, 30, 50, 0.75);
   border-color: rgba(70, 100, 150, 0.5);
 }
 
-html[data-theme='dark'] .note-card,
-html[data-theme='dark'] .about-card {
+html .note-card,
+html .about-card {
   background: linear-gradient(180deg, #101c30 0%, #0d1728 100%);
 }
 
-html[data-theme='dark'] .arch-node,
-html[data-theme='dark'] .health-icon {
+html .arch-node,
+html .health-icon {
   background: #152339;
 }
 
-html[data-theme='dark'] .table tbody tr:hover,
-html[data-theme='dark'] .paper-row:hover {
+html .table tbody tr:hover,
+html .paper-row:hover {
   background: #142238;
 }
 
-html[data-theme='dark'] .skeleton {
+html .skeleton {
   background: #16243a;
 }
 
-html[data-theme='dark'] .skeleton::after {
+html .skeleton::after {
   background: linear-gradient(
     90deg,
     transparent,
@@ -1251,121 +1251,121 @@ html[data-theme='dark'] .skeleton::after {
   );
 }
 
-html[data-theme='dark'] .status.is-gray {
+html .status.is-gray {
   background: #17253a;
 }
 
-html[data-theme='dark'] .new-card {
+html .new-card {
   background: rgba(21, 36, 60, 0.5);
   border-color: #2b4064;
 }
 
-html[data-theme='dark'] .new-icon {
+html .new-icon {
   background: var(--surface);
 }
 
-html[data-theme='dark'] .paper-rail {
+html .paper-rail {
   background: #0c1728;
 }
 
-html[data-theme='dark'] .rail-search .input {
+html .rail-search .input {
   background: var(--surface);
 }
 
-html[data-theme='dark'] .rail-item.is-active {
+html .rail-item.is-active {
   background: var(--surface-soft);
   border-color: var(--line-2);
 }
 
-html[data-theme='dark'] .legend,
-html[data-theme='dark'] .inspector {
+html .legend,
+html .inspector {
   background: rgba(15, 25, 41, 0.94);
 }
 
-html[data-theme='dark'] .abstract-text {
+html .abstract-text {
   color: var(--ink-soft);
 }
 
 /* 项目详情：筛选流水线与结果区 */
-html[data-theme='dark'] .pipeline {
+html .pipeline {
   background: linear-gradient(180deg, #101c30 0%, #0c1728 100%);
 }
 
-html[data-theme='dark'] .pipe-step {
+html .pipe-step {
   background: var(--surface);
 }
 
-html[data-theme='dark'] .pipe-step.is-final {
+html .pipe-step.is-final {
   background: linear-gradient(180deg, #12233c, #0f1b2f);
   border-color: var(--line-2);
 }
 
-html[data-theme='dark'] .pipe-step:hover {
+html .pipe-step:hover {
   border-color: var(--line-3);
 }
 
-html[data-theme='dark'] .pipe-arrow {
+html .pipe-arrow {
   color: #3b587f;
 }
 
-html[data-theme='dark'] .tabs {
+html .tabs {
   background: rgba(19, 31, 51, 0.75);
 }
 
-html[data-theme='dark'] .tab.is-active,
-html[data-theme='dark'] .filter-tab.is-active {
+html .tab.is-active,
+html .filter-tab.is-active {
   background: var(--surface-soft);
 }
 
-html[data-theme='dark'] .export-menu {
+html .export-menu {
   background: var(--surface);
 }
 
-html[data-theme='dark'] .danger-zone {
+html .danger-zone {
   background: rgba(42, 22, 24, 0.6);
   border-color: #4a2626;
 }
 
-html[data-theme='dark'] .info-list > div {
+html .info-list > div {
   border-bottom-color: var(--line);
 }
 
-html[data-theme='dark'] .review-row {
+html .review-row {
   border-top-color: var(--line);
 }
 
-html[data-theme='dark'] .match-score.is-high {
+html .match-score.is-high {
   border-color: var(--line-2);
 }
 
-html[data-theme='dark'] .article-label span {
+html .article-label span {
   color: var(--faint);
 }
 
-html[data-theme='dark'] .modal-card {
+html .modal-card {
   background: var(--surface);
   border-color: var(--line-2);
 }
 
-html[data-theme='dark'] .modal-close {
+html .modal-close {
   background: var(--surface-soft);
 }
 
-html[data-theme='dark'] .toast {
+html .toast {
   background: rgba(18, 30, 50, 0.97);
 }
 
 
-html[data-theme='dark'] .btn-secondary {
+html .btn-secondary {
   background: var(--surface);
 }
 
-html[data-theme='dark'] ::-webkit-scrollbar-thumb {
+html ::-webkit-scrollbar-thumb {
   background: #2c4466;
   background-clip: content-box;
 }
 
-html[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+html ::-webkit-scrollbar-thumb:hover {
   background: #3b587f;
   background-clip: content-box;
 }

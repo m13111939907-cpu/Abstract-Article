@@ -9,7 +9,7 @@ import {
   saveLLMSettings,
 } from '../api/client'
 import Icon from '../components/Icon.vue'
-import { applyTheme, setPetEnabled, toast, ui } from '../store'
+import { setPetEnabled, toast, ui } from '../store'
 import { formatDateTime } from '../utils/format'
 
 const retrying = ref(false)
@@ -19,12 +19,6 @@ const hasKey = ref(false)
 
 const isOffline = computed(() => connection.mode === 'offline')
 const isChecking = computed(() => connection.mode === 'checking')
-
-const themes = [
-  { value: 'light', label: '浅色', icon: 'sun' },
-  { value: 'dark', label: '深色', icon: 'moon' },
-  { value: 'system', label: '跟随系统', icon: 'settings' },
-]
 
 const providers = [
   { value: 'mock', label: 'Mock（本地推理）', base: '', model: '' },
@@ -74,10 +68,6 @@ function healthLabel(value) {
   if (isChecking.value) return '检测中'
   if (isOffline.value) return '不可用'
   return value === 'ok' ? '正常' : '异常'
-}
-
-function chooseTheme(value) {
-  applyTheme(value)
 }
 
 function chooseProvider(value) {
@@ -212,27 +202,7 @@ onMounted(async () => {
           <div class="section-head">
             <div>
               <h2 class="section-title">外观</h2>
-              <p class="section-sub">主题会保存在本地，下次打开自动恢复。</p>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <strong>主题模式</strong>
-              <small>深色模式适合夜间和答辩投影</small>
-            </div>
-            <div class="segmented">
-              <button
-                v-for="theme in themes"
-                :key="theme.value"
-                type="button"
-                class="segment"
-                :class="{ 'is-active': ui.theme === theme.value }"
-                @click="chooseTheme(theme.value)"
-              >
-                <Icon :name="theme.icon" :size="14" />
-                {{ theme.label }}
-              </button>
+              <p class="section-sub">页面固定使用月亮星空背景。</p>
             </div>
           </div>
 
@@ -556,39 +526,6 @@ onMounted(async () => {
 .setting-copy small {
   font-size: 10.5px;
   color: var(--faint);
-}
-
-.segmented {
-  display: flex;
-  gap: 3px;
-  padding: 3px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface-soft);
-}
-
-.segment {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 30px;
-  padding: 0 11px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 11.5px;
-  transition: 0.16s ease;
-}
-
-.segment:hover {
-  color: var(--ink-soft);
-}
-
-.segment.is-active {
-  background: var(--surface);
-  color: var(--blue-deep);
-  box-shadow: var(--shadow-xs);
 }
 
 .switch {

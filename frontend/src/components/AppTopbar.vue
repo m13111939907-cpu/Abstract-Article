@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { connection } from '../api/client'
-import { toggleTheme, ui } from '../store'
+import { ui } from '../store'
 import Icon from './Icon.vue'
 
 const route = useRoute()
@@ -79,16 +79,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', focusSearch))
         />
         <kbd>Ctrl K</kbd>
       </form>
-
-      <button
-        class="icon-btn theme-btn"
-        type="button"
-        :title="ui.theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'"
-        :aria-label="ui.theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'"
-        @click="toggleTheme"
-      >
-        <Icon :name="ui.theme === 'dark' ? 'sun' : 'moon'" :size="16" />
-      </button>
 
       <button
         class="conn-pill"
