@@ -37,3 +37,18 @@ class SourceOut(BaseModel):
     rss_url: str
     enabled: bool
     created_at: datetime
+
+
+class SourcePreviewItem(BaseModel):
+    title: str
+    link: str
+    published_at: datetime | None = None
+    summary: str = ""
+
+
+class SourcePreview(BaseModel):
+    source_id: int
+    source_name: str
+    feed_title: str
+    total: int
+    items: list[SourcePreviewItem]

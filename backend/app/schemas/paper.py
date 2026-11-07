@@ -32,6 +32,10 @@ class FetchResult(BaseModel):
     fetched: int = 0
     inserted: int = 0
     duplicated: int = 0
+    topic_fetched: int = 0
+    topic_inserted: int = 0
+    candidates: int = 0
+    project_candidates: int = 0
     errors: list[str] = Field(default_factory=list)
 
 

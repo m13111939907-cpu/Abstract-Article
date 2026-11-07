@@ -16,7 +16,7 @@ router = APIRouter(prefix="/papers", tags=["papers"])
 # 全部已抓取文献（分页）
 @router.get("", response_model=list[PaperOut])
 def list_papers(
-    limit: int = Query(default=20, ge=1, le=100),
+    limit: int = Query(default=20, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
 ):

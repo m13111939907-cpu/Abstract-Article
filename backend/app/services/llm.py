@@ -13,13 +13,14 @@ SKIP_WORDS = {
     "Results", "Conclusion", "Nature", "Published", "Online",
 }
 
+# 运行时模型配置（由设置接口写入，重启后端后恢复环境变量默认值）
+_runtime: dict = {}
 
-# 清理实体名
+
 def _clean_name(name: str) -> str:
     return name.strip().strip(".,;:()[]{}")
 
 
-# 去掉模型可能包裹的 ```json 代码块
 def _loads(content: str) -> dict:
     content = content.strip()
     if content.startswith("```"):
@@ -48,7 +49,6 @@ class MockProvider:
 
         entity_list = list(entities.values())[:12]
 
-        # 前几个实体两两建立关联，模拟关系抽取
         relations = []
         base = entity_list[:6]
         for i in range(len(base)):
@@ -66,7 +66,6 @@ class MockProvider:
 
         return {"entities": entity_list, "relations": relations}
 
-    # Mock 二轮判断：关键词命中摘要或图谱实体即通过
     def judge(self, keywords: list[str], abstract: str, entities: list[str]) -> dict:
         text = f"{abstract} {' '.join(entities)}".lower()
         hits = [keyword for keyword in keywords if keyword in text]
@@ -94,16 +93,20 @@ JUDGE_PROMPT = (
 )
 
 
-# 真实 DeepSeek 接口（配置 key 后启用）
-class DeepSeekProvider:
-    name = settings.deepseek_model
+# OpenAI 兼容接口：DeepSeek、Hugging Face TGI、自定义服务都能用
+class OpenAICompatProvider:
+    def __init__(self, api_key: str, base_url: str, model: str):
+        self.name = model or "openai-compatible"
+        self.api_key = api_key
+        self.base_url = base_url.rstrip("/")
+        self.model = model
 
     def _request(self, system: str, user: str) -> dict:
         resp = httpx.post(
-            f"{settings.deepseek_base_url}/chat/completions",
-            headers={"Authorization": f"Bearer {settings.deepseek_api_key}"},
+            f"{self.base_url}/chat/completions",
+            headers={"Authorization": f"Bearer {self.api_key}"},
             json={
-                "model": settings.deepseek_model,
+                "model": self.model,
                 "messages": [
                     {"role": "system", "content": system},
                     {"role": "user", "content": user},
@@ -129,6 +132,61 @@ class DeepSeekProvider:
         return self._request(JUDGE_PROMPT, context)
 
 
-# 有 key 用 DeepSeek，否则用 Mock
+# 设置接口写入运行时配置
+def set_runtime_config(config: dict) -> None:
+    _runtime.clear()
+    _runtime.update(config)
+
+
+# 把运行时配置写入数据库，后端重启后仍可恢复
+def persist_runtime_config() -> None:
+    from app.core.mysql import SessionLocal
+    from app.models.setting import AppSetting
+
+    with SessionLocal() as db:
+        row = db.get(AppSetting, "llm")
+        value = json.dumps(_runtime, ensure_ascii=False)
+        if row:
+            row.value = value
+        else:
+            db.add(AppSetting(key="llm", value=value))
+        db.commit()
+
+
+# 启动时从数据库恢复模型配置
+def load_runtime_config() -> None:
+    from app.core.mysql import SessionLocal
+    from app.models.setting import AppSetting
+
+    with SessionLocal() as db:
+        row = db.get(AppSetting, "llm")
+        if not row or not row.value:
+            return
+        try:
+            data = json.loads(row.value)
+        except ValueError:
+            return
+        if isinstance(data, dict):
+            _runtime.update(data)
+
+
+def get_runtime_config() -> dict:
+    provider = _runtime.get("provider") or (
+        "deepseek" if settings.deepseek_api_key else "mock"
+    )
+    return {
+        "provider": provider,
+        "model": _runtime.get("model") or settings.deepseek_model,
+        "base_url": _runtime.get("base_url") or settings.deepseek_base_url,
+        "has_key": bool(_runtime.get("api_key") or settings.deepseek_api_key),
+    }
+
+
+# 有可用 key 用真实接口，否则用 Mock
 def get_provider():
-    return DeepSeekProvider() if settings.deepseek_api_key else MockProvider()
+    config = get_runtime_config()
+    if config["provider"] == "mock" or not config["has_key"]:
+        return MockProvider()
+
+    api_key = _runtime.get("api_key") or settings.deepseek_api_key
+    return OpenAICompatProvider(api_key, config["base_url"], config["model"])

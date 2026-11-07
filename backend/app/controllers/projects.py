@@ -5,7 +5,7 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.core.mysql import get_db
-from app.models.paper import Paper, ProjectPaper
+from app.models.paper import ProjectPaper
 from app.models.project import Project
 from app.models.screening import LLMScreening
 from app.models.source import Source
@@ -17,8 +17,9 @@ from app.schemas.project import (
     ProjectUpdate,
 )
 from app.services.export import export_bibtex, export_csv
-from app.services.matching import screen_project
-from app.services.rss import fetch_source
+from app.services.matching import link_candidates, parse_keywords, screen_project
+from app.services.rss import fetch_source, store_items
+from app.services.search import search_openalex
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -84,11 +85,19 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
 def project_stats(project_id: int, db: Session = Depends(get_db)):
     _get_project(db, project_id)
 
-    total_papers = db.scalar(select(func.count(Paper.id))) or 0
-    first_selected = (
+    total_papers = (
         db.scalar(
             select(func.count(ProjectPaper.id)).where(
                 ProjectPaper.project_id == project_id
+            )
+        )
+        or 0
+    )
+    first_selected = (
+        db.scalar(
+            select(func.count(ProjectPaper.id)).where(
+                ProjectPaper.project_id == project_id,
+                ProjectPaper.status == "selected",
             )
         )
         or 0
@@ -156,7 +165,7 @@ def fetch_project_sources(
     source_id: int | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
-    _get_project(db, project_id)
+    project = _get_project(db, project_id)
 
     if source_id:
         source = db.get(Source, source_id)
@@ -173,6 +182,32 @@ def fetch_project_sources(
         result.inserted += stats["inserted"]
         result.duplicated += stats["duplicated"]
         result.errors.extend(stats["errors"])
+
+    # 按项目关键词做一次 OpenAlex 学术检索
+    keywords = parse_keywords(project.keywords)
+    if keywords:
+        try:
+            items = search_openalex(keywords, limit=100)
+            topic = store_items(db, items)
+            result.topic_fetched = topic["fetched"]
+            result.topic_inserted = topic["inserted"]
+            result.fetched += topic["fetched"]
+            result.inserted += topic["inserted"]
+            result.duplicated += topic["duplicated"]
+            result.errors.extend(topic["errors"])
+        except Exception as exc:  # noqa: BLE001
+            result.errors.append(f"OpenAlex: {exc}")
+
+    # 把命中关键词的文献关联到当前项目
+    result.candidates = link_candidates(db, project)
+    result.project_candidates = (
+        db.scalar(
+            select(func.count(ProjectPaper.id)).where(
+                ProjectPaper.project_id == project_id
+            )
+        )
+        or 0
+    )
     return result
 
 
@@ -187,7 +222,7 @@ def screen(project_id: int, db: Session = Depends(get_db)):
 @router.get("/{project_id}/papers", response_model=list[ProjectPaperOut])
 def list_project_papers(
     project_id: int,
-    status: str | None = Query(default=None),
+    status: str | None = Query(default="selected"),
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),

@@ -19,6 +19,7 @@ def _first_rows(db: Session, project_id: int):
         select(ProjectPaper, Paper)
         .join(Paper, ProjectPaper.paper_id == Paper.id)
         .where(ProjectPaper.project_id == project_id)
+        .where(ProjectPaper.status == "selected")
         .order_by(ProjectPaper.match_score.desc(), Paper.id)
     ).all()
     for link, paper in rows:

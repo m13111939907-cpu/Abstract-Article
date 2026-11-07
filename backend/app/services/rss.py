@@ -19,6 +19,7 @@ from app.services.text import (
 
 USER_AGENT = "Mozilla/5.0 (compatible; ArticleAbstract/1.0)"
 MAX_ABSTRACT_LEN = 5000
+JUNK_WORDS = ("封面", "封底", "目录", "征稿", "启事", "广告", "编委", "会议通知", "招聘", "投稿指南", "更正", "致谢")
 
 
 # 下载 RSS 内容并解析
@@ -70,6 +71,9 @@ def parse_entries(feed: "feedparser.FeedParserDict") -> list[dict]:
         title = clean_text(entry.get("title", ""))[:512]
         if not title:
             continue
+        # 过滤期刊 RSS 里的封面、目录、征稿等非论文条目
+        if any(word in title for word in JUNK_WORDS) and len(title) <= 24:
+            continue
         link = (entry.get("link") or "")[:1024]
         doi = (entry.get("prism_doi") or entry.get("doi") or "")[:255]
 
@@ -95,18 +99,9 @@ def parse_entries(feed: "feedparser.FeedParserDict") -> list[dict]:
     return items
 
 
-# 抓取单个订阅源并入库，返回统计
-def fetch_source(db: Session, source: Source) -> dict:
-    result = {"fetched": 0, "inserted": 0, "duplicated": 0, "errors": []}
-
-    try:
-        feed = fetch_feed(source.rss_url)
-    except Exception as exc:  # noqa: BLE001
-        result["errors"].append(f"{source.name}: {exc}")
-        return result
-
-    items = parse_entries(feed)
-    result["fetched"] = len(items)
+# 写入文献并按 content_hash 去重
+def store_items(db: Session, items: list[dict], source_id: int | None = None) -> dict:
+    result = {"fetched": len(items), "inserted": 0, "duplicated": 0, "errors": []}
 
     seen: set[str] = set()
     for item in items:
@@ -116,13 +111,12 @@ def fetch_source(db: Session, source: Source) -> dict:
             continue
         seen.add(key)
 
-        # 已存在则跳过（哈希表去重）
         exists = db.scalar(select(Paper.id).where(Paper.content_hash == key))
         if exists:
             result["duplicated"] += 1
             continue
 
-        db.add(Paper(source_id=source.id, **item))
+        db.add(Paper(source_id=source_id, **item))
         try:
             db.commit()
             result["inserted"] += 1
@@ -131,3 +125,18 @@ def fetch_source(db: Session, source: Source) -> dict:
             result["duplicated"] += 1
 
     return result
+
+
+# 抓取单个订阅源并入库，返回统计
+def fetch_source(db: Session, source: Source) -> dict:
+    try:
+        feed = fetch_feed(source.rss_url)
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "fetched": 0,
+            "inserted": 0,
+            "duplicated": 0,
+            "errors": [f"{source.name}: {exc}"],
+        }
+
+    return store_items(db, parse_entries(feed), source.id)
